@@ -20,6 +20,8 @@ export const PROGRAM_ID_GROUP_EXTENSIONS = new PublicKey("TGRPp2mDGxSyH3We9hH8pw
 export interface IInitializeLaunch {
   symbol: string;
   jsonUrl: string;
+  maxTokens?: number;
+  name?: string;
 }
 
 export const createDeployment = async ({
@@ -31,6 +33,8 @@ export const createDeployment = async ({
   const {
     symbol,
     jsonUrl,
+    maxTokens,
+    name
   } = params;
 
   const editionProgram = getProgramInstanceEditions(connection);
@@ -59,9 +63,9 @@ export const createDeployment = async ({
   instructions.push(
     await editionProgram.methods
       .initialise({
-        maxNumberOfTokens: new BN(0), // 0 means open edition i.e. no max tokens
+        maxNumberOfTokens: maxTokens ? new BN(maxTokens) : new BN(0), // 0 means open edition i.e. no max tokens
         symbol,
-        name: symbol,
+        name: name ? name : symbol,
         offchainUrl: jsonUrl, // this points to ERC721 compliant JSON metadata
         creatorCosignProgramId: null,
       })
